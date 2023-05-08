@@ -22,13 +22,20 @@ create_index_guessed_mapping:
 
 .PHONY: index_content
 index_content:
-	python week1/index.py -s $(BBUY_DATA) --workers 16 -b 3200
+	python week2/index.py -s $(BBUY_DATA) --workers 16 -b 500
 
 
 .PHONY: run_query
 run_query:
-	echo $(QUERY_FILE)
-	python week1/query.py -q $(QUERY_FILE) –-max_queries 10000
+	python week2/query.py -q $(QUERY_FILE) -m 10000 -w 4
+
+
+.PHONY: restart_os
+restart_os:
+	docker compose -f docker/docker-compose-w2.yml stop opensearch-node1
+	docker compose -f docker/docker-compose-w2.yml up opensearch-node1 -d
+	docker exec -t opensearch-node1 ./bin/opensearch-plugin install "https://github.com/aiven/prometheus-exporter-plugin-for-opensearch/releases/download/2.6.0.0/prometheus-exporter-2.6.0.0.zip"
+	docker compose -f docker/docker-compose-w2.yml restart opensearch-node1
 
 
 .PHONY: reindex_content

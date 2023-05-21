@@ -5,7 +5,11 @@ QUERY_FILE := $(shell pwd)/datasets/train.csv
 
 .PHONY: start
 start:
-	docker-compose -f ./docker/docker-compose-w1.yml up -d
+	docker-compose -f week4/docker-compose.yml up -d
+
+.PHONY: stop
+stop:
+	docker compose -f week4/docker-compose.yml stop
 
 .PHONY: del_index
 del_index:
@@ -13,7 +17,7 @@ del_index:
 
 .PHONY: create_index
 create_index:
-	curl -k -X PUT -u admin:admin "https://$(HOST):9200/bbuy_products" -H 'Content-Type: application/json' -d @./week3/bbuy_products.json
+	curl -k -X PUT -u admin:admin "https://$(HOST):9200/bbuy_products" -H 'Content-Type: application/json' -d @./week4/bbuy_products.json
 
 
 .PHONY: create_index_guessed_mapping
@@ -22,7 +26,7 @@ create_index_guessed_mapping:
 
 .PHONY: index_content
 index_content:
-	python week3/index.py -s $(BBUY_DATA) --workers 8 -b 500
+	python week3/index.py -s $(BBUY_DATA) --workers 16 -b 4000
 
 
 .PHONY: run_query
@@ -38,14 +42,13 @@ restart_os:
 	docker compose -f docker/docker-compose-w3.yml restart opensearch-node1
 
 
-.PHONY: start_os
-start_os:
-	docker compose -f docker/docker-compose-w3.yml up -d
-
-
 .PHONY: start_monitoring
 start_monitoring:
 	docker compose -f docker-grafana/monitoring.yml up -d
+
+.PHONY: stop_monitoring
+stop_monitoring:
+	docker compose -f docker-grafana/monitoring.yml stop
 
 
 .PHONY: reindex_content

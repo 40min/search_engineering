@@ -12,7 +12,7 @@
 # 2) Prometheus container scrapes those metrics (configs in ./prometheus/prometheus.yml)
 # 3) Point to Grafana on http://localhost:3000 to visualize metrics
 
-version: '1'
+version: '3.3'
 
 volumes:
     prometheus-data: 
